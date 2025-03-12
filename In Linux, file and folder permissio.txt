@@ -1,0 +1,71 @@
+In Linux, file and folder permissions determine who can read, write, or execute files and directories. Permissions are assigned to three categories of users:
+
+Owner (User)
+Group
+Others (Everyone else)
+Viewing Permissions
+You can check file/folder permissions using:
+
+ls -l
+Example output:
+
+-rw-r--r-- 1 user group 1234 Feb 18 12:00 file.txt
+
+Explanation:
+
+-rw-r--r-- → File permissions
+1 → Hard link count
+user → File owner
+group → File group
+1234 → File size in bytes
+Feb 18 12:00 → Last modified date
+file.txt → File name
+
+
+Understanding Permission Structure
+
+[Type] [Owner] [Group] [Others]
+- rw- r-- r--
+First character (- or d):
+
+- → Regular file
+d → Directory
+l → Symbolic link
+
+Next nine characters: Three sets of three permissions (rwx for owner, group, and others).
+
+r → Read (4)
+w → Write (2)
+x → Execute (1)
+- → No permission
+Example breakdown (-rw-r--r--):
+
+rw- → Owner (Read, Write)
+r-- → Group (Read)
+r-- → Others (Read)
+Changing Permissions
+Using chmod (Change Mode)
+
+Symbolic Method
+
+
+chmod u+x file.txt  # Add execute permission for user
+chmod g-w file.txt  # Remove write permission for group
+chmod o+r file.txt  # Add read permission for others
+chmod a+rwx file.txt  # Give read, write, execute to all (user, group, others)
+Numeric Method (Octal)
+
+
+chmod 754 file.txt
+7 (Owner: rwx → 4+2+1 = 7)
+5 (Group: r-x → 4+0+1 = 5)
+4 (Others: r-- → 4+0+0 = 4)
+Using chown (Change Owner)
+
+
+Recursive Permission Change
+To apply permissions recursively to all files and subdirectories:
+
+
+chmod -R 755 folder/
+chown -R user:group folder/

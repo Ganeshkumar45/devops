@@ -1,0 +1,69 @@
+Commonly used in Linux to monitor system memory, disk usage, and directory sizes.
+
+ Here's a breakdown of each:
+
+1. Check Free Memory: free -m
+This command shows the system's memory usage in megabytes (-m flag). Example output:
+
+$ free -m
+              total        used        free      shared  buff/cache   available
+Mem:           7964        4512         723         201        2728        3012
+Swap:          2048         512        1536
+total → Total available RAM
+used → RAM currently in use
+free → Free RAM available for use
+shared → Memory shared between processes
+buff/cache → Memory used for disk caching and buffering
+available → Estimated memory available for new processes
+Swap → Virtual memory usage (if RAM is full, swap is used)
+
+2. Check Disk Usage: df -kh
+This command shows disk space usage (df), with:
+
+-k → Display sizes in KB (default)
+-h → Human-readable format (e.g., MB, GB, TB)
+Example output:
+$ df -kh
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1       50G   20G   30G  40% /
+tmpfs           4G    512M  3.5G  10% /dev/shm
+/dev/sdb1       200G  150G  50G  75% /mnt/data
+
+Filesystem → Disk or partition name
+Size → Total space
+Used → Space used
+Avail → Available space
+Use% → Usage percentage
+Mounted on → Mount point (where the filesystem is accessed)
+
+3. Check Directory Size: du -sh *
+This command calculates the size of each directory in the current location:
+
+du → Disk usage
+-s → Summarize, show only the total size of each directory
+-h → Human-readable format (MB, GB)
+* → All files and folders in the current directory
+
+Example output:
+
+$ du -sh *
+2.3G    logs
+1.1G    backups
+500M    reports
+logs → 2.3 GB
+backups → 1.1 GB
+reports → 500 MB
+
+Common Use Cases
+
+✅ Check memory usage before running a heavy application:
+
+free -m
+
+✅ Monitor disk space and avoid full partitions:
+
+df -kh
+
+✅ Find large directories consuming space:
+
+du -sh * | sort -h
