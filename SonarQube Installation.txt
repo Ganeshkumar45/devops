@@ -1,0 +1,83 @@
+Step-by-Step SonarQube Installation (Without External Database)
+Step 1: Create Amazon Linux 2 EC2 Instance
+Launch an EC2 instance running Amazon Linux 2.
+Ensure port 9000 is open in the security group to access the SonarQube web interface.
+
+Step 2: Update the System
+SSH into the EC2 instance and update the system:
+
+sudo yum update -y
+
+Step 3: Install JDK 17
+
+Install JDK 17 (Amazon Corretto 17):
+
+Install JDK 17: SonarQube 9.4.0.54424 requires JDK 17. Amazon Corretto 17 is a suitable choice.
+
+sudo yum install -y java-17-amazon-corretto-devel
+
+Verify the installation:
+
+java -version
+
+Ensure the output indicates JDK 17. above
+$ java -version
+java version "23.0.2" 2025-01-21
+Java(TM) SE Runtime Environment (build 23.0.2+7-58)
+Java HotSpot(TM) 64-Bit Server VM (build 23.0.2+7-58, mixed mode, sharing)
+
+
+Step 4: Create SonarQube User
+Create the sonar user:
+
+sudo useradd sonar
+Set the correct home directory for sonar user (optional but recommended):
+
+sudo mkdir -p /opt/SonarQube
+
+Set permissions on the SonarQube directory to allow the sonar user to read/write necessary files:
+
+sudo chown -R sonar:sonar /opt/SonarQube
+
+Verify the ownership:
+
+ls -ld /opt/SonarQube
+It should show the sonar user and group as the owner:
+
+[root@ip-172-31-47-104 ~]# ls -ld /opt/SonarQube
+drwxr-xr-x. 3 sonar sonar 56 Mar 17 07:43 /opt/SonarQube
+
+
+Step 5: Download and Install SonarQube
+Download SonarQube (for version 9.4 or later, which supports JDK 17):
+
+wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.4.0.54424.zip
+
+unzip sonarqube-9.4.0.54424.zip
+
+Move SonarQube to the /opt/sonarqube directory:
+
+sudo mv sonarqube-9.4.0.54424 /opt/SonarQube
+
+sudo chown -R sonar:sonar /opt/SonarQube
+
+Start SonarQube: Switch to the sonar user and navigate to the SonarQube bin directory. Then, start SonarQube.
+Step 6: Start SonarQube
+Switch to the sonar user:
+
+sudo su - sonar
+Navigate to the SonarQube bin directory:
+
+cd /opt/SonarQube/sonarqube-9.4.0.54424/bin/linux-x86-64/
+./sonar.sh start
+This will start SonarQube using the embedded H2 database by default. The startup process may take a few minutes.
+
+
+Step 7: Access SonarQube Web Interface
+Once SonarQube is running, open a web browser and access the SonarQube interface:
+
+http://<YOUR_EC2_PUBLIC_IP>:9000
+The default login credentials are:
+
+Username: admin
+Password: admin

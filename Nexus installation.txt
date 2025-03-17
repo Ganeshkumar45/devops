@@ -1,0 +1,95 @@
+Pre-requisites:
+Ensure that port 8081 is open in the AWS security group to allow access to the Nexus web interface.
+Installation Steps:
+1. Install Dependencies:
+First, install wget:
+sudo yum install wget -y
+
+2. Install Java 8:
+Nexus requires Java 8. Install OpenJDK 8:
+sudo yum install java-1.8.0-openjdk.x86_64 -y
+You can confirm that Java is installed correctly by running:
+java -version
+
+3. Navigate to the /opt Directory:
+Change to the /opt directory to install Nexus:
+cd /opt
+
+4. Download Nexus 3.78.1-02:
+Download the latest version of Nexus Repository Manager 3.78.1-02:
+sudo wget -O nexus3.tar.gz https://download.sonatype.com/nexus/3/nexus-unix-x86-64-3.78.1-02.tar.gz
+5. Extract Nexus:
+After the download is complete, extract the Nexus archive and rename the directory for simplicity:
+sudo tar -xvf nexus3.tar.gz
+sudo mv nexus-3.78.1-02 nexus
+
+6. Create a Nexus User:
+Create a user called nexus to run the Nexus service:
+sudo adduser nexus
+
+7. Change Ownership:
+Set proper ownership of the Nexus files and the Nexus data directory (sonatype-work):
+sudo chown -R nexus:nexus /opt/nexus
+sudo chown -R nexus:nexus /opt/sonatype-work
+
+8. Configure Nexus to Run as the nexus User:
+Edit the nexus.rc file to ensure Nexus runs as the nexus user:
+sudo vi /opt/nexus/bin/nexus.rc
+Uncomment (remove #) and set the user to nexus:
+run_as_user="nexus"
+
+Save and exit by pressing :wq!.
+
+9. Modify Memory Settings for Nexus:
+Modify the memory settings in the Nexus configuration to allocate appropriate resources:
+sudo vi /opt/nexus/bin/nexus.vmoptions
+
+Update the file to the following memory settings:
+-Xms512m
+-Xmx512m
+-XX:MaxDirectMemorySize=512m
+Save and exit by pressing :wq!.
+
+10. Create a Systemd Service for Nexus:
+
+Create a systemd service file to manage Nexus as a service:
+sudo vi /etc/systemd/system/nexus.service
+Add the following content:
+
+[Unit]
+Description=Nexus Repository Manager
+After=network.target
+
+[Service]
+Type=forking
+LimitNOFILE=65536
+User=nexus
+Group=nexus
+ExecStart=/opt/nexus/bin/nexus start
+ExecStop=/opt/nexus/bin/nexus stop
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Save and exit by pressing :wq!.
+
+11. Enable and Start Nexus:
+Reload systemd, enable Nexus to start at boot, and then start the Nexus service:
+sudo systemctl daemon-reload
+sudo systemctl enable nexus
+sudo systemctl start nexus
+12. Verify Nexus is Running:
+Check if Nexus is running properly:
+sudo systemctl status nexus
+You can also check the Nexus logs for any issues:
+tail -f /opt/sonatype-work/nexus3/log/nexus.log
+
+13. Access the Nexus Web Interface:
+Once Nexus is running, open a browser and go to the following URL:
+
+http://<your_server_public_dns>:8081
+Default Credentials:
+
+Username: admin
+Password: You can retrieve the password by running the following command:
+sudo cat /opt/sonatype-work/nexus3/admin.password
